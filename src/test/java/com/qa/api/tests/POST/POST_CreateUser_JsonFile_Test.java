@@ -1,4 +1,4 @@
-package com.qa.api.tests;
+package com.qa.api.tests.POST;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,12 +13,14 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
-public class POST_CreateUser_Test {
+public class POST_CreateUser_JsonFile_Test {
+
 
     Playwright playwright;
     APIRequest request;
@@ -53,6 +55,21 @@ public class POST_CreateUser_Test {
         String userName = POST_CreateUser_Test.randomStringSimple();
         System.out.println("User Name is :"+userName);
 
+//        String Json
+        String jsonRequestBody = "{\n" +
+                "\t\"name\" : \"Abilashtesting\",\n" +
+                "\t\"email\" : \"abilashtesting@gmail.com\",\n" +
+                "\t\"gender\" : \"male\",\n" +
+                "\t\"status\" : \"active\"\n" +
+                "}";
+
+//        Request Body from Json File
+        byte[] byteArray = null;
+        File file = new File("./src/test/Data/userdata.json");
+        byteArray = Files.readAllBytes(file.toPath());
+
+
+
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("name" , userName);
         data.put("email" , userName+"@gmail.com");
@@ -64,7 +81,7 @@ public class POST_CreateUser_Test {
                 RequestOptions.create().
                         setHeader("Content-Type", "application/json").
                         setHeader("Authorization", "Bearer 740f35a2f0aa61d576ce9fa45123dda2c2d8271f7f9ed36bcab02914f91f0cbb").
-                        setData(data)
+                        setData(byteArray)
         );
 
         System.out.println("Response Status is : "+apiResponse.status());
@@ -83,13 +100,14 @@ public class POST_CreateUser_Test {
         APIResponse getApiResponse = requestContext.get("https://gorest.co.in/public/v2/users/"+userId,
                 RequestOptions.create().
                         setHeader("Authorization", "Bearer 740f35a2f0aa61d576ce9fa45123dda2c2d8271f7f9ed36bcab02914f91f0cbb")
-                );
+        );
         Assert.assertEquals(getApiResponse.status(), 200);
         Assert.assertEquals(getApiResponse.statusText(), "OK");
         System.out.println("Get Call API Response is: "+getApiResponse.text());
         Assert.assertTrue(apiResponse.text().contains(userId));
-        Assert.assertTrue(apiResponse.text().contains(userName));
+//        Assert.assertTrue(apiResponse.text().contains(userName));
 
 
     }
+
 }

@@ -11,7 +11,7 @@ import org.testng.annotations.CustomAttribute;
 @AllArgsConstructor
 @Data
 @Builder
-public class User_Lombok {
+public class User_Lombok  {
     private String id;
     private String name;
     private String email;
